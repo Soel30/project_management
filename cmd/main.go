@@ -28,6 +28,7 @@ func main() {
 	})
 
 	dbBase := db.NewDB(env.Config).DB
+
 	// Migrate the schema
 	err := dbBase.Debug().Migrator().AutoMigrate(&domain.Post{})
 	if err != nil {
