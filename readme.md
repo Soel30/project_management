@@ -17,3 +17,6 @@ to
  dbBase.Debug().Migrator().AutoMigrate()
 ```
 3. I also created a db file if you want to do it manually
+
+4. Postman
+   <https://www.postman.com/cloudy-meteor-109482/workspace/sharing-vision/collection/16254877-27031389-9a2b-4388-80c2-35a8a5987133?action=share&creator=16254877>
