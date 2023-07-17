@@ -10,10 +10,10 @@ const (
 
 type Post struct {
 	gorm.Model
-	Title    string `json:"title" bson:"title" binding:"required,min=20"`
-	Content  string `json:"content" bson:"content" binding:"required,min=200"`
-	Category string `json:"category" bson:"category" binding:"required,min=3"`
-	Status   string `json:"status" bson:"status" binding:"required,oneof=Publish Draft Thrash"`
+	Title    string `json:"title" bson:"title"`
+	Content  string `json:"content" bson:"content"`
+	Category string `json:"category" bson:"category"`
+	Status   string `json:"status" bson:"status" binding:"oneof=Publish Draft Thrash"`
 }
 
 type PostRepository interface {
@@ -23,4 +23,15 @@ type PostRepository interface {
 	Update(post Post) (Post, error)
 	Delete(id int) error
 	FindByLimitOffset(limit int, offset int) ([]Post, error)
+}
+
+type Pagination struct {
+	Limit     int    `json:"limit"`
+	Page      int    `json:"page"`
+	Sort      string `json:"sort"`
+	NextPage  int    `json:"next_page"`
+	PrevPage  int    `json:"prev_page"`
+	TotalData int    `json:"total_data"`
+	TotalPage int    `json:"total_page"`
+	Data      []Post `json:"data"`
 }

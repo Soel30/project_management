@@ -3,6 +3,8 @@ package controllers
 import (
 	"net/http"
 	"sharing_vision/domain"
+	"sharing_vision/repository"
+	"sharing_vision/utils"
 	"strconv"
 
 	"github.com/gin-gonic/gin"
@@ -20,26 +22,32 @@ func NewPostController(db *gorm.DB) PostController {
 }
 
 func (c *PostController) FindAll(ctx *gin.Context) {
-	var posts []domain.Post
-	limit_query := ctx.Query("limit")
-	if limit_query == "" {
-		limit_query = "-1"
-	}
-	offset_query := ctx.Query("offset")
-	if offset_query == "" {
-		offset_query = "-1"
+	var posts domain.Post
+	pagination := utils.GeneratePaginationFromRequest(ctx)
+	status_query := ctx.Query("status")
+
+	if status_query == "" {
+		postLists, err := repository.GetAllPost(&posts, pagination, c.DB, "")
+		if err != nil {
+			ctx.JSON(http.StatusInternalServerError, gin.H{
+				"message": "Internal Server Error",
+			})
+			return
+		}
+
+		ctx.JSON(http.StatusOK, postLists)
+	} else {
+		postLists, err := repository.GetAllPost(&posts, pagination, c.DB, status_query)
+		if err != nil {
+			ctx.JSON(http.StatusInternalServerError, gin.H{
+				"message": "Internal Server Error",
+			})
+			return
+		}
+
+		ctx.JSON(http.StatusOK, postLists)
 	}
 
-	limitInt, _ := strconv.Atoi(limit_query)
-	offsetInt, _ := strconv.Atoi(offset_query)
-	result := c.DB.Limit(limitInt).Offset(offsetInt).Find(&posts)
-	if result.Error != nil {
-		ctx.JSON(http.StatusInternalServerError, gin.H{
-			"message": "Internal Server Error",
-		})
-		return
-	}
-	ctx.JSON(http.StatusOK, posts)
 }
 
 func (c *PostController) FindById(ctx *gin.Context) {
@@ -56,13 +64,49 @@ func (c *PostController) FindById(ctx *gin.Context) {
 
 func (c *PostController) Create(ctx *gin.Context) {
 	var post domain.Post
+	var result *gorm.DB
+	var errorArray []string
 
 	if err := ctx.ShouldBindJSON(&post); err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
+	if post.Status == "Draft" {
+		result = c.DB.Save(&post)
+	} else if post.Status == "Publish" {
+		if post.Title == "" {
+			errorArray = append(errorArray, "Title cannot be empty")
+		}
+		if post.Content == "" {
+			errorArray = append(errorArray, "Content cannot be empty")
+		}
+		if post.Category == "" {
+			errorArray = append(errorArray, "Category cannot be empty")
+		}
+		if len(post.Title) < 20 {
+			errorArray = append(errorArray, "Title minimum length is 20")
+		}
+		if len(post.Content) < 200 {
+			errorArray = append(errorArray, "Content minimum length is 200")
+		}
+		if len(post.Category) < 3 {
+			errorArray = append(errorArray, "Category minimum length is 3")
+		}
 
-	result := c.DB.Create(&post)
+		if len(errorArray) > 0 {
+			ctx.JSON(http.StatusBadRequest, gin.H{
+				"message": errorArray,
+			})
+			return
+		}
+		result = c.DB.Save(&post)
+
+	} else {
+		ctx.JSON(http.StatusBadRequest, gin.H{
+			"message": "Status must be Draft or Publish",
+		})
+		return
+	}
 	if result.Error != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{
 			"message": "Internal Server Error",
@@ -97,14 +141,21 @@ func (c *PostController) Update(ctx *gin.Context) {
 }
 
 func (c *PostController) Delete(ctx *gin.Context) {
-	result := c.DB.Delete(&domain.Post{}, ctx.Param("id"))
+	// result := c.DB.Delete(&domain.Post{}, ctx.Param("id"))
+	// change status to Thrash
+	var post domain.Post
+	result := c.DB.First(&post, ctx.Param("id"))
+	post.Status = "Thrash"
+	result = c.DB.Save(&post)
 	if result.Error != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{
 			"message": "Internal Server Error",
 		})
 		return
 	}
-	ctx.JSON(http.StatusNoContent, nil)
+	ctx.JSON(http.StatusOK, gin.H{
+		"message": "Post deleted successfully",
+	})
 }
 
 func (c *PostController) FindByLimitOffset(ctx *gin.Context) {
