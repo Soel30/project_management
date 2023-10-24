@@ -1,6 +1,5 @@
 # Build & Run
 1. Install go if not installed on your machine.
-2. Install MongoDB if not installed on your machine.
 3. Important: Change the DB_HOST to localhost (DB_HOST=localhost) in .env and change DB_NAME to your databa
 4. Install neccessary Golang packages, `cd cmd` then `go install`
 4. Run go `run cmd/main.go`.
