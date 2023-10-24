@@ -1,16 +1,14 @@
 package utils
 
 import (
-	models "sharing_vision/domain"
+	models "pm/domain"
 	"strconv"
 
 	"github.com/gin-gonic/gin"
 )
 
-// GeneratePaginationFromRequest ..
-func GeneratePaginationFromRequest(c *gin.Context) models.Pagination {
-	// Initializing default
-	//	var mode string
+func GenerateUserPagination(c *gin.Context) models.PaginationUser {
+
 	limit := 10
 	page := 1
 	sort := "created_at asc"
@@ -20,20 +18,15 @@ func GeneratePaginationFromRequest(c *gin.Context) models.Pagination {
 		switch key {
 		case "limit":
 			limit, _ = strconv.Atoi(queryValue)
-			break
 		case "page":
 			page, _ = strconv.Atoi(queryValue)
-			break
 		case "sort":
 			sort = queryValue
-			break
-
 		}
 	}
-	return models.Pagination{
+	return models.PaginationUser{
 		Limit: limit,
 		Page:  page,
 		Sort:  sort,
 	}
-
 }

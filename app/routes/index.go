@@ -1,7 +1,7 @@
 package routes
 
 import (
-	v1 "sharing_vision/app/routes/v1"
+	v1 "pm/app/routes/v1"
 
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"

@@ -3,7 +3,7 @@ package env
 import (
 	"fmt"
 
-	model "sharing_vision/models"
+	model "pm/models"
 
 	"github.com/caarlos0/env/v8"
 	"github.com/joho/godotenv"

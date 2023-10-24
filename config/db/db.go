@@ -3,7 +3,7 @@ package db
 import (
 	"context"
 	"log"
-	model "sharing_vision/models"
+	model "pm/models"
 	"time"
 
 	"gorm.io/driver/mysql"

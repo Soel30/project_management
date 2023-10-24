@@ -3,10 +3,10 @@ package main
 import (
 	"log"
 	"net/http"
-	"sharing_vision/app/routes"
-	"sharing_vision/config/db"
-	"sharing_vision/config/env"
-	"sharing_vision/domain"
+	"pm/app/routes"
+	"pm/config/db"
+	"pm/config/env"
+	"pm/domain"
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
