@@ -14,14 +14,6 @@ type Role struct {
 	Users []User `gorm:"foreignKey:RoleId"`
 }
 
-type RoleRepository interface {
-	FindAll() ([]Role, error)
-	FindById(id int) (Role, error)
-	Create(role Role) (Role, error)
-	Update(role Role) (Role, error)
-	Delete(id int) error
-}
-
 type PaginationRole struct {
 	Limit     int    `json:"limit"`
 	Page      int    `json:"page"`

@@ -10,18 +10,10 @@ const (
 
 type Workspace struct {
 	gorm.Model
-	Name  string  `json:"name" bson:"name"`
-	Color string  `json:"color" bson:"color"`
-	Users []*User `gorm:"many2many:user_workspaces;"`
-}
-
-type WorkspaceRepository interface {
-	FindAll() ([]Workspace, error)
-	FindById(id int) (Workspace, error)
-	Create(workspace Workspace) (Workspace, error)
-	Update(workspace Workspace) (Workspace, error)
-	Delete(id int) error
-	FindByLimitOffset(limit int, offset int) ([]Workspace, error)
+	Name       string      `json:"name" bson:"name"`
+	Color      string      `json:"color" bson:"color"`
+	Users      []*User     `gorm:"many2many:user_workspaces;"`
+	Categories []*Category `gorm:"foreignKey:WorkspaceId"`
 }
 
 type PaginationWorkspace struct {

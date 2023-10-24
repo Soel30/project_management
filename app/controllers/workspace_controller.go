@@ -50,7 +50,7 @@ func (c *WorkspaceController) FindAll(ctx *gin.Context) {
 
 func (c *WorkspaceController) FindById(ctx *gin.Context) {
 	var workspace domain.Workspace
-	result := c.DB.First(&workspace, ctx.Param("id")).Preload("Users")
+	result := c.DB.First(&workspace, ctx.Param("id")).Preload("Users").Preload("Categories")
 	if result.Error != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{
 			"message": "Internal Server Error",

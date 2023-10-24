@@ -22,13 +22,13 @@ func GetAllWorkspace(workspace *domain.Workspace, pagination domain.PaginationWo
 	if status == "" {
 		err = db.Limit(pagination.Limit).Offset(offset).Find(&workspaces).Preload("Users", func(db *gorm.DB) *gorm.DB {
 			return db.Select("users.*, user_workspaces.role_id as role_id")
-		}, "status = ?", "active").Error
+		}, "status = ?", "active").Preload("Categories").Error
 
 		db.Model(&domain.Workspace{}).Count(&totalData)
 	} else {
 		err = db.Where("status = ?", status).Limit(pagination.Limit).Offset(offset).Find(&workspaces).Preload("Users", func(db *gorm.DB) *gorm.DB {
 			return db.Select("users.*, user_workspaces.role_id as role_id")
-		}, "status = ?", "active").Error
+		}, "status = ?", "active").Preload("Categories").Error
 
 		db.Model(&domain.Workspace{}).Where("status = ?", status).Count(&totalData)
 	}

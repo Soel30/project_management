@@ -30,15 +30,6 @@ type UserWorkspace struct {
 	Role        Role      `gorm:"foreignKey:RoleId"`
 }
 
-type UserRepository interface {
-	FindAll() ([]User, error)
-	FindById(id int) (User, error)
-	Create(user User) (User, error)
-	Update(user User) (User, error)
-	Delete(id int) error
-	FindByLimitOffset(limit int, offset int) ([]User, error)
-}
-
 type PaginationUser struct {
 	Limit     int    `json:"limit"`
 	Page      int    `json:"page"`

@@ -12,4 +12,5 @@ func Routes(db *gorm.DB, engine *gin.Engine) {
 	v1.UserRoutes(db, api)
 	v1.RoleRoutes(db, api)
 	v1.WorkspaceRoutes(db, api)
+	v1.CategoryRoutes(db, api)
 }
