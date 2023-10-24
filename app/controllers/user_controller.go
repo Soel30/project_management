@@ -38,7 +38,7 @@ func (c *UserController) FindAll(ctx *gin.Context) {
 
 func (c *UserController) FindById(ctx *gin.Context) {
 	var user domain.User
-	result := c.DB.First(&user, ctx.Param("id"))
+	result := c.DB.First(&user, ctx.Param("id")).Preload("Workspaces")
 	if result.Error != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{
 			"message": "Internal Server Error",

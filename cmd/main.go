@@ -38,7 +38,7 @@ func main() {
 	dbBase := db.NewDB(env.Config).DB
 
 	// Migrate the schema
-	err := dbBase.Debug().Migrator().AutoMigrate(&domain.User{})
+	err := dbBase.Debug().Migrator().AutoMigrate(&domain.User{}, &domain.Workspace{}, &domain.Role{}, &domain.UserWorkspace{})
 	if err != nil {
 		panic(err)
 	}

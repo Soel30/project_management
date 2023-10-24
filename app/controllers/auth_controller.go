@@ -89,7 +89,6 @@ func Register(ctx *gin.Context, DB *gorm.DB) {
 		user.Photo = photo
 	}
 
-	// handle form-data
 	err := ctx.ShouldBind(&user)
 	if err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{
@@ -98,8 +97,6 @@ func Register(ctx *gin.Context, DB *gorm.DB) {
 		return
 	}
 
-	// create user
-	// has password
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{

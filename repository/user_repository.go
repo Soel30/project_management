@@ -13,6 +13,7 @@ type UserRepositoryImpl struct {
 }
 
 func GetAllUser(user *domain.User, pagination domain.PaginationUser, db *gorm.DB, status string) (domain.PaginationUser, error) {
+	// get all user with pagination and preload workspace with additional column role in pivot table user_workspace
 	var users []domain.User
 	var totalData int64
 	var NextPage int
@@ -22,10 +23,14 @@ func GetAllUser(user *domain.User, pagination domain.PaginationUser, db *gorm.DB
 
 	offset := (pagination.Page - 1) * pagination.Limit
 	if status == "" {
-		err = db.Limit(pagination.Limit).Offset(offset).Find(&users).Error
+		err = db.Limit(pagination.Limit).Offset(offset).Find(&users).Preload("Workspaces", func(db *gorm.DB) *gorm.DB {
+			return db.Select("workspaces.*, user_workspaces.role_id as role_id")
+		}).Error
 		db.Model(&domain.User{}).Count(&totalData)
 	} else {
-		err = db.Where("status = ?", status).Limit(pagination.Limit).Offset(offset).Find(&users).Error
+		err = db.Where("status = ?", status).Limit(pagination.Limit).Offset(offset).Find(&users).Preload("Workspaces", func(db *gorm.DB) *gorm.DB {
+			return db.Select("workspaces.*, user_workspaces.role_id as role_id")
+		}).Error
 		db.Model(&domain.User{}).Where("status = ?", status).Count(&totalData)
 	}
 
@@ -59,7 +64,6 @@ func GetAllUser(user *domain.User, pagination domain.PaginationUser, db *gorm.DB
 
 	return pagination, err
 }
-
 func FindUserByUsername(db *gorm.DB, user domain.User, username string) (result *gorm.DB) {
 	result = db.Where("username = ?", username).First(&user)
 
