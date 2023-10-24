@@ -10,8 +10,7 @@ const (
 
 type Role struct {
 	gorm.Model
-	Name string `json:"name" bson:"name"`
-	// one to many relationship with user
+	Name  string `json:"name" bson:"name"`
 	Users []User `gorm:"foreignKey:RoleId"`
 }
 

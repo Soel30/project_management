@@ -10,4 +10,5 @@ import (
 func Routes(db *gorm.DB, engine *gin.Engine) {
 	api := engine.Group("/api/v1")
 	v1.UserRoutes(db, api)
+	v1.RoleRoutes(db, api)
 }

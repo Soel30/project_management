@@ -2,6 +2,7 @@ package v1
 
 import (
 	"pm/app/controllers"
+	"pm/app/middleware"
 
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
@@ -10,10 +11,11 @@ import (
 func UserRoutes(db *gorm.DB, router *gin.RouterGroup) {
 	user := controllers.NewUserController(db)
 
-	router.GET("/users", user.FindAll)
-	router.GET("/users/:id", user.FindById)
-	router.POST("/users", user.Create)
-	router.PUT("/users/:id", user.Update)
-	router.DELETE("/users/:id", user.Delete)
+	middlew_chkt := middleware.CheckJwtAuth(db)
+	router.GET("/users", middlew_chkt, user.FindAll)
+	router.GET("/users/:id", middlew_chkt, user.FindById)
+	router.POST("/users", middlew_chkt, user.Create)
+	router.PUT("/users/:id", middlew_chkt, user.Update)
+	router.DELETE("/users/:id", middlew_chkt, user.Delete)
 
 }

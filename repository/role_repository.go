@@ -1,19 +1,17 @@
 package repository
 
 import (
-	"pm/config/db"
 	"pm/domain"
 
 	"gorm.io/gorm"
 )
 
-type UserRepositoryImpl struct {
-	DB         *db.Database
-	Collection string
+type RoleRepository struct {
+	DB *gorm.DB
 }
 
-func GetAllUser(user *domain.User, pagination domain.PaginationUser, db *gorm.DB, status string) (domain.PaginationUser, error) {
-	var users []domain.User
+func GetAllRole(role *domain.Role, pagination domain.PaginationRole, db *gorm.DB, status string) (domain.PaginationRole, error) {
+	var roles []domain.Role
 	var totalData int64
 	var NextPage int
 	var PrevPage int
@@ -22,11 +20,11 @@ func GetAllUser(user *domain.User, pagination domain.PaginationUser, db *gorm.DB
 
 	offset := (pagination.Page - 1) * pagination.Limit
 	if status == "" {
-		err = db.Limit(pagination.Limit).Offset(offset).Find(&users).Error
-		db.Model(&domain.User{}).Count(&totalData)
+		err = db.Limit(pagination.Limit).Offset(offset).Find(&roles).Error
+		db.Model(&domain.Role{}).Count(&totalData)
 	} else {
-		err = db.Where("status = ?", status).Limit(pagination.Limit).Offset(offset).Find(&users).Error
-		db.Model(&domain.User{}).Where("status = ?", status).Count(&totalData)
+		err = db.Where("status = ?", status).Limit(pagination.Limit).Offset(offset).Find(&roles).Error
+		db.Model(&domain.Role{}).Where("status = ?", status).Count(&totalData)
 	}
 
 	if err != nil {
@@ -51,17 +49,11 @@ func GetAllUser(user *domain.User, pagination domain.PaginationUser, db *gorm.DB
 		TotalPage = (int(totalData) / pagination.Limit) + 1
 	}
 
-	pagination.Data = users
+	pagination.Data = roles
 	pagination.TotalData = int(totalData)
 	pagination.NextPage = NextPage
 	pagination.PrevPage = PrevPage
 	pagination.TotalPage = TotalPage
 
 	return pagination, err
-}
-
-func FindUserByUsername(db *gorm.DB, user domain.User, username string) (result *gorm.DB) {
-	result = db.Where("username = ?", username).First(&user)
-
-	return result
 }
